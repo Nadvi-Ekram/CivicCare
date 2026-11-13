@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CivicCare — Prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:#E4E6EE;font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:#111827;display:flex;align-items:center;justify-content:center;min-height:100vh}
+  #phone{width:390px;height:844px;background:#F5F6FA;border-radius:44px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 0 0 10px #1F2937,0 30px 60px rgba(17,24,39,.25)}
+  @media (max-width:500px){body{background:#F5F6FA;display:block}#phone{width:100%;height:100vh;height:100dvh;border-radius:0;box-shadow:none}}
+  button{font:inherit;cursor:pointer}
+  input,textarea{font:inherit}
+  .screen{flex:1;display:flex;flex-direction:column;min-height:0}
+  .scroll{flex:1;min-height:0;overflow-y:auto}
+  .white{background:#fff}
+  h1,h2,p{margin:0}
+  .h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+  .muted{color:#4B5563}
+  .btn{height:54px;border:0;border-radius:14px;background:#4F46E5;color:#fff;font-size:16px;font-weight:700;width:100%}
+  .btn:hover{background:#4338CA}
+  .btn2{height:54px;border:1px solid #D1D5DB;border-radius:14px;background:#fff;color:#111827;font-size:16px;font-weight:700;width:100%}
+  .btn2:hover{background:#F9FAFB}
+  .link{border:0;background:transparent;color:#4338CA;font-weight:700;padding:12px 4px}
+  .iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#111827;display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+  .field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#374151}
+  .input{height:50px;padding:0 14px;border:1px solid #D1D5DB;border-radius:12px;font-size:15px;font-weight:500;color:#111827;background:#fff;width:100%}
+  textarea.input{height:auto;padding:12px 14px;resize:none;line-height:1.45}
+  .input:focus{outline:2px solid #4F46E5;outline-offset:1px;border-color:#4F46E5}
+  .seg{display:grid;gap:4px;padding:4px;background:#ECEDF2;border-radius:14px}
+  .seg button{height:42px;border:0;border-radius:10px;font-size:14px;font-weight:700;background:transparent;color:#4B5563}
+  .seg button.on{background:#fff;color:#111827;box-shadow:0 1px 3px rgba(17,24,39,.12)}
+  .pill{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap}
+  .card{background:#fff;border:1px solid #E5E7EB;border-radius:16px;color:#111827;text-align:left;width:100%}
+  .card:hover{border-color:#C7D2FE}
+  .chip{height:36px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap;background:#fff;color:#374151;border:1px solid #D1D5DB}
+  .chip.on{background:#111827;color:#fff;border-color:#111827}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+  .cat{height:44px;border-radius:12px;font-size:13px;font-weight:700;background:#fff;color:#374151;border:1.5px solid #D1D5DB}
+  .cat.on{background:#EEF0FF;color:#3730A3;border-color:#4F46E5}
+  .ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .header{display:flex;align-items:center;gap:12px;padding:20px 20px 8px}
+  .bar{padding:12px 20px 24px;background:#F5F6FA;border-top:1px solid #E5E7EB}
+  nav.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-top:1px solid #E5E7EB;padding:8px 12px 20px}
+  nav.tabs button{height:56px;border:0;background:transparent;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#6B7280}
+  nav.tabs button.on{color:#4338CA}
+  .toast{position:absolute;left:20px;right:20px;bottom:104px;background:#111827;color:#fff;border-radius:14px;padding:14px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;animation:up .25s ease}
+  @keyframes up{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+  .feature{display:flex;gap:14px;align-items:flex-start}
+  .ficon{width:40px;height:40px;border-radius:12px;background:#EEF0FF;color:#4338CA;display:flex;align-items:center;justify-content:center;flex:none}
+  .meta{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:12px}
+  .meta div:first-child{font-size:12px;color:#4B5563;font-weight:600}
+  .meta div:last-child{font-size:14px;font-weight:700;margin-top:4px}
+  .stat{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;color:#111827;text-align:left}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<div id="phone" aria-live="polite"></div>
+
+<script>
+(function () {
+  // ---------- icons ----------
+  var I = {
+    back: '<path d="M15 18l-6-6 6-6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    check: '<path d="M20 6L9 17l-5-5"/>',
+    logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
+    home: '<path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+    report: '<rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/>',
+    list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+    pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>'
+  };
+  function icon(n, size, sw, color) {
+    return '<svg width="' + (size || 20) + '" height="' + (size || 20) + '" viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="' + (sw || 2) + '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + '</svg>';
+  }
+  var LOGO = '<div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">' +
+    '<svg width="52" height="42" viewBox="95 78 277 222" role="img" aria-label="CivicCare logo"><circle cx="145" cy="110" r="28" fill="#5B4FE9"/><circle cx="322" cy="110" r="28" fill="#5B4FE9"/><path d="M100 175 Q100 150 125 150 H170 Q182 150 190 162 L232 210 Q239 220 231 228 Q223 234 215 226 L180 192 V290 Q180 295 175 295 H105 Q100 295 100 290 Z" fill="#5B4FE9"/><path d="M367 175 Q367 150 342 150 H297 Q285 150 277 162 L242 204 Q236 213 243 220 Q250 226 257 219 L287 192 V290 Q287 295 292 295 H362 Q367 295 367 290 Z" fill="#5B4FE9"/></svg>' +
+    '<div style="font-size:18px;font-weight:800;font-style:italic;color:#1E1B4B">CivicCare</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#4338CA;letter-spacing:.02em">Report. Track. Resolve.</div></div>';
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  // ---------- data ----------
+  var STATUS = {
+    'Pending': { bg: '#FEF3C7', fg: '#92400E', dot: '#D97706' },
+    'In progress': { bg: '#DBEAFE', fg: '#1E40AF', dot: '#2563EB' },
+    'Resolved': { bg: '#D1FAE5', fg: '#065F46', dot: '#059669' }
+  };
+  var ORDER = ['Pending', 'In progress', 'Resolved'];
+  var CATS = ['Roads', 'Water', 'Electricity', 'Waste', 'Drainage', 'Others'];
+  var TILE = { Roads: ['#E0E7FF', '#3730A3'], Water: ['#DBEAFE', '#1E40AF'], Electricity: ['#FEF3C7', '#92400E'], Waste: ['#D1FAE5', '#065F46'], Drainage: ['#FCE7F3', '#9D174D'], Others: ['#F3F4F6', '#374151'] };
+  function emptyForm() { return { title: '', category: 'Roads', location: '', desc: '', priority: 'Medium', photo: false }; }
+  function today() { return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); }
+
+  var S = {
+    screen: 'welcome', role: 'citizen', userName: 'Nadia Islam',
+    login: { phone: '01712345678', password: 'demo1234' },
+    reg: { name: '', phone: '', area: '', password: '' },
+    form: emptyForm(), filter: 'All', adminFilter: 'All',
+    selectedId: 'CC-1038', lastId: '', nextNum: 1046,
+    adminStatus: 'Pending', adminNote: '', error: '', toast: '',
+    complaints: [
+      { id: 'CC-1045', title: 'Open manhole on main road', category: 'Drainage', location: 'Mirpur 10, near the bus stand', desc: 'The manhole cover is missing. It is dangerous for people walking at night.', status: 'Pending', date: '12 Nov 2026', by: 'Rafiq Hasan', mine: false, priority: 'High', note: '' },
+      { id: 'CC-1042', title: 'Streetlights off for a week', category: 'Electricity', location: 'Road 5, Dhanmondi', desc: 'All streetlights on this road have been off for seven days. The road is completely dark at night.', status: 'Pending', date: '10 Nov 2026', by: 'Nadia Islam', mine: true, priority: 'High', note: '' },
+      { id: 'CC-1040', title: 'Garbage not collected', category: 'Waste', location: 'Block C, Bashundhara', desc: 'Garbage has not been collected for four days and is piling up beside the road.', status: 'In progress', date: '09 Nov 2026', by: 'Sadia Karim', mine: false, priority: 'Medium', note: 'Collection truck rescheduled for tomorrow morning.' },
+      { id: 'CC-1038', title: 'Waterlogging after rain', category: 'Drainage', location: 'Shantinagar main road', desc: 'After every rain the road floods knee-deep and takes a whole day to drain.', status: 'In progress', date: '08 Nov 2026', by: 'Nadia Islam', mine: true, priority: 'Medium', note: 'Drain cleaning team assigned. Work starts this week.' },
+      { id: 'CC-1031', title: 'No water supply in the evening', category: 'Water', location: 'Mohammadpur, Block B', desc: 'No running water from 6 pm to midnight for the past week.', status: 'Resolved', date: '01 Nov 2026', by: 'Nadia Islam', mine: true, priority: 'High', note: 'The pump was repaired by the water supply team.' }
+    ]
+  };
+
+  var app = document.getElementById('phone');
+  var toastTimer;
+  function set(o) { Object.assign(S, o); render(); }
+  function toast(msg) { clearTimeout(toastTimer); toastTimer = setTimeout(function () { S.toast = ''; render(); }, 2600); return msg; }
+  function mine() { return S.complaints.filter(function (c) { return c.mine; }); }
+  function count(arr, st) { return arr.filter(function (c) { return c.status === st; }).length; }
+  function sel() { return S.complaints.filter(function (c) { return c.id === S.selectedId; })[0] || S.complaints[0]; }
+  function pill(c) { var s = STATUS[c.status]; return '<span class="pill" style="background:' + s.bg + ';color:' + s.fg + '">' + esc(c.status) + '</span>'; }
+  function backBtn(to) { return '<button type="button" class="iconbtn" aria-label="Back" data-go="' + to + '">' + icon('back') + '</button>'; }
+  function chips(arr, cur, key) {
+    return '<div class="chips" role="group" aria-label="Filter by status">' + ['All'].concat(ORDER).map(function (f) {
+      var n = f === 'All' ? arr.length : count(arr, f);
+      return '<button type="button" class="chip' + (cur === f ? ' on' : '') + '" data-filter="' + key + '|' + f + '">' + f + ' · ' + n + '</button>';
+    }).join('') + '</div>';
+  }
+
+  // ---------- screens ----------
+  var V = {};
+  V.welcome = function () {
+    function feat(ic, t, d) { return '<div class="feature"><div class="ficon">' + icon(ic) + '</div><div><div style="font-weight:700;font-size:15px">' + t + '</div><div class="muted" style="font-size:14px;line-height:1.45">' + d + '</div></div></div>'; }
+    return '<div class="screen white"><div style="background:#EEF0FF;padding:40px 28px 30px;display:flex;flex-direction:column;gap:20px;border-radius:0 0 32px 32px">' + LOGO +
+      '<div style="display:flex;flex-direction:column;gap:10px"><h1 style="font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.02em;color:#1E1B4B">Fix your city, together.</h1>' +
+      '<p style="font-size:16px;line-height:1.5;color:#3F3F69">Report broken roads, waterlogging, garbage or dark streetlights in your area, and follow every step until they are fixed.</p></div></div>' +
+      '<div class="scroll" style="padding:28px;display:flex;flex-direction:column;gap:18px">' +
+      feat('plus', 'Report', 'Describe the issue, pick a category, add a photo.') +
+      feat('clock', 'Track', 'See when your report is reviewed and worked on.') +
+      feat('check', 'Resolve', 'Get notified with a note from the city office.') +
+      '<div style="flex:1"></div>' +
+      '<button type="button" class="btn" data-go="register">Create account</button>' +
+      '<button type="button" class="btn2" data-go="login" data-role="citizen">I already have an account</button>' +
+      '<button type="button" class="link" style="font-size:14px" data-go="login" data-role="admin">City office login</button></div></div>';
+  };
+  V.login = function () {
+    return '<div class="screen white scroll" style="padding:20px 24px 28px;gap:24px">' + backBtn('welcome') +
+      '<div style="display:flex;flex-direction:column;gap:8px"><h1 class="h1">Welcome back</h1><p class="muted" style="font-size:15px">Log in to report and track issues.</p></div>' +
+      '<div class="seg" role="group" aria-label="Account type" style="grid-template-columns:1fr 1fr">' +
+      '<button type="button" class="' + (S.role === 'citizen' ? 'on' : '') + '" data-setrole="citizen">Citizen</button>' +
+      '<button type="button" class="' + (S.role === 'admin' ? 'on' : '') + '" data-setrole="admin">City office</button></div>' +
+      '<div style="display:flex;flex-direction:column;gap:16px">' +
+      '<label class="field">Phone number<input class="input" type="tel" data-bind="login.phone" value="' + esc(S.login.phone) + '"></label>' +
+      '<label class="field">Password<input class="input" type="password" data-bind="login.password" value="' + esc(S.login.password) + '"></label></div>' +
+      '<button type="button" class="btn" data-act="login">' + (S.role === 'admin' ? 'Log in as city office' : 'Log in') + '</button>' +
+      '<div style="flex:1"></div><div class="muted" style="display:flex;justify-content:center;align-items:center;gap:4px;font-size:14px">New to CivicCare?<button type="button" class="link" data-go="register">Create an account</button></div></div>';
+  };
+  V.register = function () {
+    function f(label, key, type, ph) { return '<label class="field">' + label + '<input class="input" type="' + type + '" data-bind="reg.' + key + '" placeholder="' + ph + '" value="' + esc(S.reg[key]) + '"></label>'; }
+    return '<div class="screen white scroll" style="padding:20px 24px 28px;gap:20px">' + backBtn('welcome') +
+      '<div style="display:flex;flex-direction:column;gap:8px"><h1 class="h1">Create your account</h1><p class="muted" style="font-size:15px">We\'ll send updates about your reports to your phone.</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px">' + f('Full name', 'name', 'text', 'e.g. Nadia Islam') + f('Phone number', 'phone', 'tel', '01XXXXXXXXX') + f('Area / ward', 'area', 'text', 'e.g. Mirpur, Ward 2') + f('Password', 'password', 'password', 'At least 8 characters') + '</div>' +
+      '<button type="button" class="btn" style="flex:none" data-act="register">Create account</button>' +
+      '<div style="display:flex;align-items:center;gap:12px;color:#6B7280;font-size:13px"><div style="flex:1;height:1px;background:#E5E7EB"></div>or<div style="flex:1;height:1px;background:#E5E7EB"></div></div>' +
+      '<button type="button" class="btn2" style="flex:none;font-size:15px" data-act="register">Continue with Google</button>' +
+      '<div class="muted" style="display:flex;justify-content:center;align-items:center;gap:4px;font-size:14px">Already registered?<button type="button" class="link" data-go="login" data-role="citizen">Log in</button></div></div>';
+  };
+  function row(c, go) {
+    var t = TILE[c.category] || TILE.Others;
+    return '<button type="button" class="card" style="padding:14px;display:flex;gap:12px;align-items:center" data-open="' + c.id + '|' + go + '">' +
+      '<span style="width:42px;height:42px;border-radius:12px;background:' + t[0] + ';color:' + t[1] + ';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:none">' + c.category.charAt(0) + '</span>' +
+      '<span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span class="ell" style="font-size:15px;font-weight:700">' + esc(c.title) + '</span><span class="muted" style="font-size:12px">' + c.id + ' · ' + esc(c.date) + '</span></span>' + pill(c) + '</button>';
+  }
+  V.home = function () {
+    var m = mine();
+    var first = S.userName.split(' ')[0];
+    return '<div class="screen scroll" style="padding:20px 20px 24px;gap:22px">' +
+      '<div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:44px;border-radius:50%;background:#4F46E5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex:none">' + esc(S.userName.charAt(0).toUpperCase()) + '</div>' +
+      '<div style="flex:1;min-width:0"><div class="muted" style="font-size:13px">Hello,</div><div class="ell" style="font-size:18px;font-weight:800">' + esc(first) + '</div></div>' +
+      '<button type="button" class="iconbtn" aria-label="Log out" data-go="welcome">' + icon('logout') + '</button></div>' +
+      '<div style="background:#312E81;border-radius:24px;padding:22px;color:#fff;display:flex;flex-direction:column;gap:14px"><div style="font-size:20px;font-weight:800;line-height:1.25">Something wrong in your area?</div>' +
+      '<div style="font-size:14px;line-height:1.5;color:#E0E7FF">Report it in under a minute. It goes straight to the city office.</div>' +
+      '<button type="button" data-go="submit" style="height:48px;border:0;border-radius:12px;background:#fff;color:#312E81;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px">' + icon('plus', 18, 2.4) + 'Report an issue</button></div>' +
+      '<div style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:16px;font-weight:800">Your reports</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">' +
+      ORDER.map(function (st) { return '<button type="button" class="stat" data-filter="filter|' + st + '|list"><span style="font-size:26px;font-weight:800">' + count(m, st) + '</span><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:' + STATUS[st].fg + '"><span class="dot" style="background:' + STATUS[st].dot + '"></span>' + st + '</span></button>'; }).join('') +
+      '</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;align-items:center;justify-content:space-between"><h2 style="font-size:16px;font-weight:800">Recent activity</h2><button type="button" class="link" style="font-size:14px;padding:12px 0" data-go="list">See all</button></div>' +
+      (m.length ? m.slice(0, 3).map(function (c) { return row(c, 'detail'); }).join('') : '<div class="muted" style="font-size:14px;padding:12px 0">No reports yet.</div>') + '</div></div>';
+  };
+  V.submit = function () {
+    var f = S.form;
+    return '<div class="screen"><div class="header">' + backBtn('home') + '<h1 style="font-size:20px;font-weight:800">Report an issue</h1></div>' +
+      '<div class="scroll" style="padding:12px 20px 20px;display:flex;flex-direction:column;gap:18px">' +
+      '<label class="field">What\'s the problem?<input class="input" type="text" data-bind="form.title" placeholder="e.g. Streetlights not working" value="' + esc(f.title) + '"></label>' +
+      '<div role="group" aria-label="Category" style="display:flex;flex-direction:column;gap:8px"><span class="field">Category</span><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">' +
+      CATS.map(function (k) { return '<button type="button" class="cat' + (f.category === k ? ' on' : '') + '" data-cat="' + k + '">' + k + '</button>'; }).join('') + '</div></div>' +
+      '<label class="field">Location<input class="input" type="text" data-bind="form.location" placeholder="Road, area or nearby landmark" value="' + esc(f.location) + '"></label>' +
+      '<label class="field">Description<textarea class="input" rows="4" data-bind="form.desc" placeholder="What happened, since when, who is affected?">' + esc(f.desc) + '</textarea><span id="desccount" style="align-self:flex-end;font-size:12px;font-weight:500;color:#6B7280">' + f.desc.length + ' characters</span></label>' +
+      '<div role="group" aria-label="Priority" style="display:flex;flex-direction:column;gap:8px"><span class="field">How urgent is it?</span><div class="seg" style="grid-template-columns:repeat(3,1fr)">' +
+      ['Low', 'Medium', 'High'].map(function (p) { return '<button type="button" class="' + (f.priority === p ? 'on' : '') + '" data-prio="' + p + '">' + p + '</button>'; }).join('') + '</div></div>' +
+      (f.photo
+        ? '<div style="height:64px;border:1px solid #E5E7EB;border-radius:14px;background:#fff;display:flex;align-items:center;gap:12px;padding:0 8px 0 10px"><div style="width:44px;height:44px;border-radius:10px;background:#E0E7FF;color:#4338CA;display:flex;align-items:center;justify-content:center">' + icon('image') + '</div><div style="flex:1;font-size:14px;font-weight:600">photo_01.jpg attached</div><button type="button" data-act="photo" style="border:0;background:transparent;color:#B91C1C;font-size:14px;font-weight:700;padding:12px">Remove</button></div>'
+        : '<button type="button" data-act="photo" style="height:64px;border:1.5px dashed #A5B4FC;border-radius:14px;background:#F5F7FF;color:#4338CA;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px">' + icon('camera') + 'Add a photo (optional)</button>') +
+      (S.error ? '<div role="alert" style="background:#FEF2F2;color:#991B1B;border-radius:12px;padding:12px 14px;font-size:14px;font-weight:600">' + esc(S.error) + '</div>' : '') +
+      '</div><div class="bar"><button type="button" class="btn" data-act="submit">Submit report</button></div></div>';
+  };
+  V.success = function () {
+    return '<div class="screen white" style="align-items:center;justify-content:center;padding:32px 28px;gap:18px;text-align:center">' +
+      '<div style="width:96px;height:96px;border-radius:50%;background:#D1FAE5;color:#047857;display:flex;align-items:center;justify-content:center">' + icon('check', 44, 2.5) + '</div>' +
+      '<h1 style="font-size:26px;font-weight:800">Report submitted</h1><p class="muted" style="font-size:15px;line-height:1.5">Your ticket number is <strong style="color:#111827">' + S.lastId + '</strong>. You\'ll be notified when the city office updates it.</p><div style="height:12px"></div>' +
+      '<button type="button" class="btn" data-open="' + S.lastId + '|detail">Track this report</button><button type="button" class="btn2" data-go="home">Back to home</button></div>';
+  };
+  V.list = function () {
+    var m = mine();
+    var list = S.filter === 'All' ? m : m.filter(function (c) { return c.status === S.filter; });
+    return '<div class="screen"><div style="padding:24px 20px 12px;display:flex;flex-direction:column;gap:14px"><h1 style="font-size:24px;font-weight:800">My reports</h1>' + chips(m, S.filter, 'filter') + '</div>' +
+      '<div class="scroll" style="padding:4px 20px 20px;display:flex;flex-direction:column;gap:10px">' +
+      (list.length ? list.map(function (c) {
+        return '<button type="button" class="card" style="padding:16px;display:flex;flex-direction:column;gap:10px" data-open="' + c.id + '|detail"><span style="display:flex;justify-content:space-between;align-items:center;width:100%"><span class="muted" style="font-size:12px;font-weight:600">' + c.id + ' · ' + esc(c.date) + '</span>' + pill(c) + '</span>' +
+          '<span style="font-size:16px;font-weight:700">' + esc(c.title) + '</span><span class="muted" style="display:flex;align-items:center;gap:6px;font-size:13px">' + icon('pin', 16) + esc(c.category + ' · ' + c.location) + '</span></button>';
+      }).join('') : '<div class="muted" style="padding:40px 12px;text-align:center;font-size:14px">No reports with this status.</div>') + '</div></div>';
+  };
+  V.detail = function () {
+    var c = sel(), idx = ORDER.indexOf(c.status);
+    var steps = [
+      ['Submitted', c.date, 'done'],
+      ['Under review', 'The city office checks the report', idx >= 1 ? 'done' : 'current'],
+      ['In progress', 'Someone is working on it', idx >= 2 ? 'done' : (idx === 1 ? 'current' : 'todo')],
+      ['Resolved', 'The issue is fixed', idx === 2 ? 'done' : 'todo']
+    ];
+    function m(l, v) { return '<div class="meta"><div>' + l + '</div><div>' + esc(v) + '</div></div>'; }
+    return '<div class="screen"><div class="header">' + backBtn('list') + '<div class="muted" style="font-size:14px;font-weight:700">' + c.id + '</div></div>' +
+      '<div class="scroll" style="padding:8px 20px 24px;display:flex;flex-direction:column;gap:18px">' +
+      '<div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">' + pill(c) + '<h1 style="font-size:24px;font-weight:800;line-height:1.2">' + esc(c.title) + '</h1></div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' + m('Category', c.category) + m('Priority', c.priority) + m('Location', c.location) + m('Submitted', c.date) + '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:6px"><h2 style="font-size:15px;font-weight:800">Description</h2><p style="font-size:15px;line-height:1.55;color:#374151">' + esc(c.desc) + '</p></div>' +
+      (c.note ? '<div style="background:#EEF0FF;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:4px"><div style="font-size:12px;font-weight:800;color:#3730A3">Update from city office</div><div style="font-size:14px;line-height:1.5;color:#1E1B4B">' + esc(c.note) + '</div></div>' : '') +
+      '<div><h2 style="font-size:15px;font-weight:800;margin-bottom:14px">Progress</h2>' +
+      steps.map(function (s, i) {
+        var done = s[2] === 'done', todo = s[2] === 'todo';
+        return '<div style="display:flex;gap:14px"><div style="display:flex;flex-direction:column;align-items:center;width:26px;flex:none">' +
+          '<div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:' + (done ? '#4F46E5' : '#fff') + ';border:2px solid ' + (todo ? '#D1D5DB' : '#4F46E5') + '">' + (done ? icon('check', 14, 3) : '') + '</div>' +
+          (i < 3 ? '<div style="width:2px;flex:1;min-height:22px;background:' + (done ? '#4F46E5' : '#E5E7EB') + '"></div>' : '') + '</div>' +
+          '<div style="padding:2px 0 16px;display:flex;flex-direction:column;gap:2px"><div style="font-size:15px;font-weight:700;color:' + (todo ? '#6B7280' : '#111827') + '">' + s[0] + '</div><div class="muted" style="font-size:13px">' + esc(s[1]) + '</div></div></div>';
+      }).join('') + '</div></div></div>';
+  };
+  V.admin = function () {
+    var all = S.complaints;
+    var list = S.adminFilter === 'All' ? all : all.filter(function (c) { return c.status === S.adminFilter; });
+    var stats = [['Total', all.length], ['Pending', count(all, 'Pending')], ['Active', count(all, 'In progress')], ['Resolved', count(all, 'Resolved')]];
+    return '<div class="screen"><div style="background:#1E1B4B;color:#fff;padding:22px 20px 20px;display:flex;flex-direction:column;gap:18px">' +
+      '<div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#C7D2FE;letter-spacing:.06em">CITY OFFICE</div><div style="font-size:22px;font-weight:800;margin-top:2px">Manage reports</div></div>' +
+      '<button type="button" class="iconbtn" aria-label="Log out" data-go="welcome" style="background:transparent;border-color:#4338CA;color:#fff">' + icon('logout') + '</button></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">' + stats.map(function (s) { return '<div style="background:#312E81;border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;gap:4px"><span style="font-size:22px;font-weight:800">' + s[1] + '</span><span style="font-size:11px;font-weight:700;color:#E0E7FF">' + s[0] + '</span></div>'; }).join('') + '</div></div>' +
+      '<div style="padding:16px 20px 8px">' + chips(all, S.adminFilter, 'adminFilter') + '</div>' +
+      '<div class="scroll" style="padding:8px 20px 20px;display:flex;flex-direction:column;gap:10px">' +
+      (list.length ? list.map(function (c) {
+        var hi = c.priority === 'High';
+        return '<button type="button" class="card" style="padding:14px;display:flex;gap:12px;align-items:center" data-open="' + c.id + '|adminDetail"><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">' +
+          '<span style="display:flex;align-items:center;gap:8px"><span class="muted" style="font-size:12px;font-weight:600">' + c.id + '</span><span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:' + (hi ? '#FEE2E2' : '#F3F4F6') + ';color:' + (hi ? '#991B1B' : '#374151') + '">' + c.priority + '</span></span>' +
+          '<span class="ell" style="font-size:15px;font-weight:700">' + esc(c.title) + '</span><span class="muted" style="font-size:12px">' + esc(c.by + ' · ' + c.category + ' · ' + c.date) + '</span></span>' + pill(c) + '</button>';
+      }).join('') : '<div class="muted" style="padding:40px 12px;text-align:center;font-size:14px">Nothing here. Nice work.</div>') + '</div></div>';
+  };
+  V.adminDetail = function () {
+    var c = sel();
+    return '<div class="screen"><div class="header">' + backBtn('admin') + '<div class="muted ell" style="font-size:14px;font-weight:700">' + c.id + ' · reported by ' + esc(c.by) + '</div></div>' +
+      '<div class="scroll" style="padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px">' +
+      '<div style="display:flex;flex-direction:column;gap:8px"><h1 style="font-size:22px;font-weight:800;line-height:1.25">' + esc(c.title) + '</h1><div class="muted" style="font-size:13px">' + esc(c.category + ' · ' + c.location + ' · ' + c.date + ' · ' + c.priority + ' priority') + '</div></div>' +
+      '<p style="font-size:15px;line-height:1.55;color:#374151;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px">' + esc(c.desc) + '</p>' +
+      '<div role="group" aria-label="Set status" style="display:flex;flex-direction:column;gap:8px"><span class="field">Set status</span><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">' +
+      ORDER.map(function (o) { var on = S.adminStatus === o, s = STATUS[o]; return '<button type="button" data-status="' + o + '" style="height:48px;border-radius:12px;font-size:13px;font-weight:700;background:' + (on ? s.bg : '#fff') + ';color:' + (on ? s.fg : '#374151') + ';border:1.5px solid ' + (on ? s.dot : '#D1D5DB') + '">' + o + '</button>'; }).join('') + '</div></div>' +
+      '<label class="field">Note to the citizen<textarea class="input" rows="3" data-bind="adminNote" placeholder="e.g. Repair team assigned for Sunday.">' + esc(S.adminNote) + '</textarea></label>' +
+      '</div><div class="bar"><button type="button" class="btn" data-act="save">Save and notify citizen</button></div></div>';
+  };
+
+  // ---------- render ----------
+  function render() {
+    var scr = S.screen;
+    var tabs = scr === 'home' || scr === 'list' || scr === 'detail';
+    var html = V[scr]();
+    if (tabs) {
+      html += '<nav class="tabs" aria-label="Main">' +
+        '<button type="button" class="' + (scr === 'home' ? 'on' : '') + '" data-go="home">' + icon('home', 22) + 'Home</button>' +
+        '<button type="button" data-go="submit">' + icon('report', 22) + 'Report</button>' +
+        '<button type="button" class="' + (scr !== 'home' ? 'on' : '') + '" data-go="list">' + icon('list', 22) + 'My reports</button></nav>';
+    }
+    if (S.toast) html += '<div class="toast" role="status">' + icon('check', 18, 2.6, '#6EE7B7') + esc(S.toast) + '</div>';
+    app.innerHTML = html;
+  }
+
+  // ---------- events ----------
+  app.addEventListener('input', function (e) {
+    var b = e.target.getAttribute('data-bind');
+    if (!b) return;
+    var p = b.split('.');
+    if (p.length === 2) S[p[0]][p[1]] = e.target.value; else S[p[0]] = e.target.value;
+    if (b === 'form.desc') { var el = document.getElementById('desccount'); if (el) el.textContent = e.target.value.length + ' characters'; }
+  });
+  app.addEventListener('click', function (e) {
+    var t = e.target.closest('button');
+    if (!t) return;
+    var d = t.dataset;
+    if (d.go) {
+      var o = { screen: d.go, error: '' };
+      if (d.role) o.role = d.role;
+      if (d.go === 'submit') { var sc = app.querySelector('.scroll'); }
+      set(o);
+      return;
+    }
+    if (d.setrole) return set({ role: d.setrole });
+    if (d.filter) {
+      var p = d.filter.split('|'), o2 = {}; o2[p[0]] = p[1]; if (p[2]) o2.screen = p[2]; return set(o2);
+    }
+    if (d.open) {
+      var q = d.open.split('|'), c = S.complaints.filter(function (x) { return x.id === q[0]; })[0];
+      return set({ screen: q[1], selectedId: q[0], adminStatus: c.status, adminNote: c.note || '' });
+    }
+    if (d.cat) { S.form.category = d.cat; return render(); }
+    if (d.prio) { S.form.priority = d.prio; return render(); }
+    if (d.status) return set({ adminStatus: d.status });
+    switch (d.act) {
+      case 'login': return set({ screen: S.role === 'admin' ? 'admin' : 'home' });
+      case 'register':
+        var n = S.reg.name.trim();
+        return set({ screen: 'home', role: 'citizen', userName: n || S.userName, toast: toast('Account created. Welcome!') });
+      case 'photo': S.form.photo = !S.form.photo; return render();
+      case 'submit':
+        var f = S.form;
+        if (!f.title.trim() || !f.desc.trim()) return set({ error: 'Please add a title and a short description.' });
+        var id = 'CC-' + S.nextNum;
+        S.complaints.unshift({ id: id, title: f.title.trim(), category: f.category, location: f.location.trim() || 'Not specified', desc: f.desc.trim(), status: 'Pending', date: today(), by: S.userName, mine: true, priority: f.priority, note: '' });
+        return set({ nextNum: S.nextNum + 1, lastId: id, selectedId: id, screen: 'success', error: '', form: emptyForm() });
+      case 'save':
+        S.complaints = S.complaints.map(function (c) { return c.id === S.selectedId ? Object.assign({}, c, { status: S.adminStatus, note: S.adminNote.trim() }) : c; });
+        return set({ screen: 'admin', toast: toast('Status updated. Citizen notified.') });
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
