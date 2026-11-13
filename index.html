@@ -338,6 +338,20 @@
     }
   });
 
+  // ---------- deep links: open a screen directly, e.g. index.html#home ----------
+  var ROUTES = { welcome: 'welcome', login: 'login', register: 'register', home: 'home', report: 'submit', reports: 'list', detail: 'detail', console: 'admin', 'update-status': 'adminDetail' };
+  function fromHash() {
+    var h = location.hash.replace('#', '');
+    if (!ROUTES[h]) return false;
+    S.screen = ROUTES[h];
+    S.role = (h === 'console' || h === 'update-status') ? 'admin' : 'citizen';
+    if (h === 'update-status') { S.selectedId = 'CC-1045'; S.adminStatus = 'Pending'; S.adminNote = ''; }
+    if (h === 'detail') { S.selectedId = 'CC-1038'; }
+    return true;
+  }
+  window.addEventListener('hashchange', function () { if (fromHash()) render(); });
+  fromHash();
+
   render();
 })();
 </script>
